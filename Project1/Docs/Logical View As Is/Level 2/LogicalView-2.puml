@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+interface User
+
+component "ACME APPLICATION" {
+
+  HTTPs - [Front Office]
+  [API Server]
+
+
+}
+
+User --> "ACME APPLICATION" : Authentication
+
+
+[API Server] <-- [Front Office] :  Requests
+[API Server] --> [Front Office] :  Response
+
+
+
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+usecase UC1_GenerateSKU as UC1
+usecase UC2_PersistData as UC2
+usecase UC3_RecommendReviews as UC3
+
+actor User
+User -- UC1
+User -- UC2
+User -- UC3
+
+note right of User
+UC1 : As the system i want to generate a Stock Keeping Unit (SKU)
+everytime a product is created, based on 3 possible algorithms.
+
+UC2 : As the system i want to be able to persist data
+based on whichever data model is picked.
+
+UC3: As the system i want to recommend reviews
+to the user based on 3 possible algorithms
+
+end note
+
+@enduml

@@ -1,0 +1,3480 @@
+{
+	"info": {
+		"_postman_id": "04f0d2b0-da6e-4d38-ab08-e4fadd771800",
+		"name": "ACME-ARQSOFT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21248811"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    const token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"token\", token);  \r",
+									"\r",
+									"    const userId = pm.response.json().userId;\r",
+									"    pm.environment.set(\"userId\", userId);\r",
+									"\r",
+									"    const username = pm.response.json().username;\r",
+									"    pm.environment.set(\"username\", username);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"username\", \"admin1@mail.com\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"admin1@mail.com\",\r\n    \"password\":\"AdminPW1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/public/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"User exists with id and respective username\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.username).to.eql( pm.environment.get(\"username\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/admin/user/{{userId}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"User exists with username\", function () {",
+									"",
+									"    pm.response.to.have.status(200);",
+									"",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.username).to.eql( pm.environment.get(\"username\"));",
+									"",
+									"    pm.expect(responseJson.nif).to.eql(\"355489123\");",
+									"",
+									"    pm.expect(responseJson.authorities[0].authority).to.eql(\"Admin\");",
+									"",
+									"    // ...",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/admin/user/username/{{username}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								"username",
+								"{{username}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get catalog",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Products Found\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.environment.set(\"catalogLength\", jsonData.length);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/products",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a product",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"var designation = pm.variables.replaceIn('{{$randomLoremWords}}')",
+									"var description = pm.variables.replaceIn('{{$randomLoremSentence}}')",
+									"",
+									"",
+									"pm.environment.set(\"designation\", designation);",
+									"pm.environment.set(\"description\", description);",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Product created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const response = pm.response.json();",
+									"const responseText = pm.response.text();",
+									"pm.environment.set(\"sku\", response.sku);",
+									"",
+									"pm.test(\"A new product was returned\", function () {",
+									"    const designation = pm.environment.get(\"designation\");",
+									"    pm.expect(response.designation).to.equals(designation);",
+									"});",
+									"",
+									"pm.test(\"Check sku generated: algorithm \"+pm.environment.get(\"skuGenerator\"), function () {",
+									"    ",
+									"",
+									"    sku = response.sku;",
+									"    designation = response.designation;",
+									"    var matches = responseBody.match(/\"sku\":\"(.*?)\"/)[1];",
+									"",
+									"    if(pm.environment.get(\"skuGenerator\")==1) {",
+									"",
+									"        found = false;",
+									"        var expectedPattern = /^[0-9][A-Z][0-9][A-Z][0-9][A-Z]{2}[0-9][A-Z][0-9][!@#$&*()_\\-+=:',.]/;",
+									"",
+									"        var found = sku.match(expectedPattern);",
+									"        pm.expect(found[0]).to.equals(sku)",
+									"        pm.test('SKU matches the expected pattern', function () {",
+									"        pm.expect(matches).to.match(expectedPattern);",
+									"        });",
+									"",
+									"    } else if (pm.environment.get(\"skuGenerator\")==2) {",
+									"        ",
+									"        found = false;",
+									"        // Define the expected pattern using a regex",
+									"            var expectedPattern = /.*\\.[0-9a-fA-F]+.*/;",
+									"",
+									"        pm.test('SKU matches the expected pattern', function () {",
+									"        pm.expect(matches).to.match(expectedPattern);",
+									"});",
+									"       ",
+									"    } else { // skuGenerator 3",
+									"",
+									"",
+									"        found = false;",
+									"        var expectedPattern = /^([0-9][A-Za-z]){3}[A-Za-z][0-9]\\.[0-9a-fA-F]+$/;",
+									"",
+									"        pm.expect(matches).to.match(expectedPattern);",
+									"",
+									"",
+									"    }",
+									"    ",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n    \"designation\": \"{{designation}}\",\n    \"description\": \"{{description}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/products/",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get updated catalog",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Products Found\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"const previousCatalogLength = pm.environment.get(\"catalogLength\");",
+									"const expectedCatalogLength = previousCatalogLength + 1",
+									"",
+									"const lastProduct = jsonData[expectedCatalogLength-1];",
+									"",
+									"pm.test(\"A new product was included in catalog\", function () {",
+									"    pm.expect(jsonData.length).to.equals(expectedCatalogLength);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/products",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get product by sku",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Product Found\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"const sku = pm.environment.get(\"sku\");",
+									"const designation = pm.environment.get(\"designation\");",
+									"",
+									"pm.test(\"Checking Product sku\", function () {    ",
+									"    pm.expect(jsonData.sku).to.eql(sku);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/products/{{sku}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get product(s) by designation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Product Found\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"const product = jsonData[0];",
+									"",
+									"const sku = pm.environment.get(\"sku\");",
+									"const designation = pm.environment.get(\"designation\");",
+									"const description = pm.environment.get(\"description\");",
+									"",
+									"pm.test(\"Checking Product designation\", function () {",
+									"    pm.expect(product.designation).to.eql(designation);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/products/designation/{{designation}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"designation",
+								"{{designation}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Patch designation and descritpion of a product",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"var designationPatched = pm.variables.replaceIn('{{$randomLoremWords}}')",
+									"var descriptionPatched = pm.variables.replaceIn('{{$randomLoremSentence}}')",
+									"",
+									"pm.environment.set(\"designationPatched\", designationPatched);",
+									"pm.environment.set(\"descriptionPatched\", descriptionPatched);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Product patched\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"The product was patched\", function () {",
+									"",
+									"    const product = pm.response.json();",
+									"",
+									"    const sku = pm.environment.get(\"sku\");",
+									"    const designationPatched = pm.environment.get(\"designationPatched\");",
+									"",
+									"    pm.expect(product.sku).to.equals(sku);",
+									"    pm.expect(product.designation).to.equals(designationPatched);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"designation\": \"{{designationPatched}}\",\n    \"description\": \"{{descriptionPatched}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/products/{{sku}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check if patched",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Product found\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Product has been correctly patched\", function () {",
+									"",
+									"    const product = pm.response.json();",
+									"",
+									"    const sku = pm.environment.get(\"sku\");",
+									"    const designationPatched = pm.environment.get(\"designationPatched\");",
+									"",
+									"    pm.expect(product.sku).to.equals(sku);",
+									"    pm.expect(product.designation).to.equals(designationPatched);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/products/{{sku}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a product to delete",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"var designation2Delete = pm.variables.replaceIn('{{$randomLoremWords}}')",
+									"var description2Delete = pm.variables.replaceIn('{{$randomLoremSentence}}')",
+									"",
+									"",
+									"pm.environment.set(\"description2Delete\", description2Delete);",
+									"pm.environment.set(\"designation2Delete\", designation2Delete);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Product created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const p = pm.response.json();",
+									"console.log(p.sku);",
+									"pm.environment.set(\"sku2Delete\", p.sku)",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"designation\": \"{{designation2Delete}}\",\n    \"description\": \"{{description2Delete}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/products",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Product by sku",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Product was deleted\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/products/{{sku2Delete}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku2Delete}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check if deleted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Product not found\", function () {",
+									"pm.globals.get(\"variable_key\");",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/products/{{sku2Delete}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku2Delete}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reviews",
+			"item": [
+				{
+					"name": "List Review by Product's SKU",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Products Found\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"There are not reviews for this product\", function () {",
+									"",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.equals(0);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"status\", \"ok\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOST}}/products/{{sku}}/reviews/Dasda",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku}}",
+								"reviews",
+								"Dasda"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Review by user's ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Reviews endpoint return OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/reviews/{{userId}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Review given the Product's SKU",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"var reviewText = pm.variables.replaceIn('{{$randomLoremSentence}}')",
+									"",
+									"pm.environment.set(\"reviewText\", reviewText);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const review = pm.response.json();",
+									"pm.environment.set(\"idReview\", review.idReview);",
+									"",
+									"pm.test(\"A new review was returned\", function () {",
+									"",
+									"    const reviewText = pm.environment.get(\"reviewText\");",
+									"",
+									"    pm.expect(review.reviewText).to.equals(reviewText);",
+									"    pm.expect(review.rating).to.equals(5.0);",
+									"    pm.expect(review.vote).to.equals(0);",
+									"    pm.expect(review.approvalStatus).to.equals(\"pending\");",
+									"",
+									"    var publishingDate = new Date( review.publishingDate );",
+									"    var currentDate = new Date();",
+									"    pm.expect( publishingDate.toLocaleDateString() ).to.equals(currentDate.toLocaleDateString());",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": \"{{userId}}\",\n    \"reviewText\": \"{{reviewText}}\",\n    \"rating\": 5.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/products/{{sku}}/reviews",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku}}",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review was approved\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Status of the review is 'approved'\", function () {",
+									"",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.approvalStatus).to.equals(\"approved\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "approved"
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/acceptreject/{{idReview}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"acceptreject",
+								"{{idReview}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upvote for approved review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote added\", function () {",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Returns true\", function () {",
+									"    pm.response.to.have.body(\"true\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicate upvote for review is not possible",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote not added\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Downvote for approved review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote added\", function () {",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Returns true\", function () {",
+									"    pm.response.to.have.body(\"true\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{userId}},\n    \"vote\": \"downVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicate downvote for review is not possible Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote not added\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{userId}},\n    \"vote\": \"downVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Review with vote cannot be deleted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"It is not possible to delete a review with votes\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List pending reviews",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Products Found\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"All returned reviews are pending\", function () {",
+									"",
+									"    const reviews = pm.response.json();",
+									"",
+									"    reviews.forEach(function(review) {",
+									"        pm.expect(review.approvalStatus).to.equals(\"pending\");",
+									"    })",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/reviews/pending",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"pending"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pending review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review status updated\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Status of the review is 'pending'\", function () {",
+									"",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.approvalStatus).to.equals(\"pending\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "pending"
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/acceptreject/{{idReview}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"acceptreject",
+								"{{idReview}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upvote is invalid for pending review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote is invalid for pending review\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Downvote is invalid for pending review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Downvote is invalid for pending review\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reject review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review status updated\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Status of the review is 'rejected'\", function () {",
+									"",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.approvalStatus).to.equals(\"rejected\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "rejected"
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/acceptreject/{{idReview}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"acceptreject",
+								"{{idReview}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upvote is invalid for rejected review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote is invalid for rejected review\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Downvote is invalid for rejected review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Downvote is invalid for rejected review\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid status value",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review status is not updated\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "pendingsadsda"
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/acceptreject/{{idReview}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"acceptreject",
+								"{{idReview}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Review to delete",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"var reviewText = pm.variables.replaceIn('{{$randomLoremSentence}}')",
+									"",
+									"pm.environment.set(\"review2DeleteText\", reviewText);",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const responseText = pm.response.json();",
+									"pm.environment.set(\"idReview2Delete\", responseText.idReview);",
+									"",
+									"pm.test(\"A new review was returned\", function () {",
+									"",
+									"    const reviewText = pm.environment.get(\"review2DeleteText\");",
+									"",
+									"    pm.expect(responseText.reviewText).to.equals(reviewText);",
+									"    pm.expect(responseText.rating).to.equals(0.0);",
+									"    pm.expect(responseText.vote).to.equals(0);",
+									"    pm.expect(responseText.approvalStatus).to.equals(\"pending\");",
+									"",
+									"    var publishingDate = new Date( responseText.publishingDate );",
+									"    var currentDate = new Date();",
+									"    pm.expect( publishingDate.toLocaleDateString() ).to.equals(currentDate.toLocaleDateString());",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": \"{{userId}}\",\n    \"reviewText\": \"{{review2DeleteText}}\",\n    \"rating\":1.11\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/products/{{sku}}/reviews",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku}}",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Review without vote can be deleted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"It is possible to delete a review without votes\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Returns true\", function () {",
+									"    pm.response.to.have.body(\"true\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview2Delete}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview2Delete}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "It is not possible to delete a deleted review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"It is not possible to delete a deleted review\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview2Delete}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview2Delete}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Aggregated Rating",
+			"item": [
+				{
+					"name": "Aggregated rating given productID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/aggregatedrating/{{sku}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"aggregatedrating",
+								"{{sku}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Recommendation Scenario",
+			"item": [
+				{
+					"name": "Login Random1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    const token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"token\", token);  \r",
+									"\r",
+									"    const userId = pm.response.json().userId;\r",
+									"    pm.environment.set(\"random1_userId\", userId);\r",
+									"\r",
+									"    const username = pm.response.json().username;\r",
+									"    pm.environment.set(\"random1_username\", username);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"random1_username\", \"user1@mail.com\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"user1@mail.com\",\r\n    \"password\":\"userPW1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/public/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a product Copy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"var designation = pm.variables.replaceIn('{{$randomLoremWords}}')",
+									"var description = pm.variables.replaceIn('{{$randomLoremSentence}}')",
+									"",
+									"",
+									"pm.environment.set(\"designation\", designation);",
+									"pm.environment.set(\"description\", description);",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Product created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const product = pm.response.json();",
+									"pm.environment.set(\"sku\", product.sku);",
+									"",
+									"pm.test(\"A new product was returned\", function () {",
+									"",
+									"    ",
+									"",
+									"    ",
+									"    const designation = pm.environment.get(\"designation\");",
+									"",
+									"    ",
+									"    pm.expect(product.designation).to.equals(designation);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n    \"designation\": \"{{designation}}\",\n    \"description\": \"{{description}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/products/",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Review1",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"var reviewText = pm.variables.replaceIn('{{$randomLoremSentence}}')",
+									"",
+									"pm.environment.set(\"reviewText\", reviewText);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const review = pm.response.json();",
+									"pm.environment.set(\"idReview1\", review.idReview);",
+									"",
+									"pm.test(\"A new review was returned\", function () {",
+									"",
+									"    const reviewText = pm.environment.get(\"reviewText\");",
+									"",
+									"    pm.expect(review.reviewText).to.equals(reviewText);",
+									"    pm.expect(review.rating).to.equals(5.0);",
+									"    pm.expect(review.vote).to.equals(0);",
+									"    pm.expect(review.approvalStatus).to.equals(\"pending\");",
+									"",
+									"    var publishingDate = new Date( review.publishingDate );",
+									"    var currentDate = new Date();",
+									"    pm.expect( publishingDate.toLocaleDateString() ).to.equals(currentDate.toLocaleDateString());",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": \"{{random1_userId}}\",\n    \"reviewText\": \"{{reviewText}}\",\n    \"rating\": 5.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/products/{{sku}}/reviews",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku}}",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Review1.2",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"var reviewText = pm.variables.replaceIn('{{$randomLoremSentence}}')",
+									"",
+									"pm.environment.set(\"reviewText\", reviewText);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const review = pm.response.json();",
+									"pm.environment.set(\"idReview1.2\", review.idReview);",
+									"",
+									"pm.test(\"A new review was returned\", function () {",
+									"",
+									"    const reviewText = pm.environment.get(\"reviewText\");",
+									"",
+									"    pm.expect(review.reviewText).to.equals(reviewText);",
+									"    pm.expect(review.rating).to.equals(5.0);",
+									"    pm.expect(review.vote).to.equals(0);",
+									"    pm.expect(review.approvalStatus).to.equals(\"pending\");",
+									"",
+									"    var publishingDate = new Date( review.publishingDate );",
+									"    var currentDate = new Date();",
+									"    pm.expect( publishingDate.toLocaleDateString() ).to.equals(currentDate.toLocaleDateString());",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": \"{{random1_userId}}\",\n    \"reviewText\": \"{{reviewText}}\",\n    \"rating\": 5.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/products/{{sku}}/reviews",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku}}",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve review1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review was approved\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Status of the review is 'approved'\", function () {",
+									"",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.approvalStatus).to.equals(\"approved\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "approved"
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/acceptreject/{{idReview1}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"acceptreject",
+								"{{idReview1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve review1.2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review was approved\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Status of the review is 'approved'\", function () {",
+									"",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.approvalStatus).to.equals(\"approved\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "approved"
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/acceptreject/{{idReview1.2}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"acceptreject",
+								"{{idReview1.2}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Random2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    const token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"token\", token);  \r",
+									"\r",
+									"    const userId = pm.response.json().userId;\r",
+									"    pm.environment.set(\"random2_userId\", userId);\r",
+									"\r",
+									"    const username = pm.response.json().username;\r",
+									"    pm.environment.set(\"random2_username\", username);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"username\", \"admin1@mail.com\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"user2@mail.com\",\r\n    \"password\":\"userPW2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/public/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Review2",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"var reviewText = pm.variables.replaceIn('{{$randomLoremSentence}}')",
+									"",
+									"pm.environment.set(\"reviewText\", reviewText);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const review = pm.response.json();",
+									"pm.environment.set(\"idReview2\", review.idReview);",
+									"",
+									"pm.test(\"A new review was returned\", function () {",
+									"",
+									"    const reviewText = pm.environment.get(\"reviewText\");",
+									"",
+									"    pm.expect(review.reviewText).to.equals(reviewText);",
+									"    pm.expect(review.rating).to.equals(5.0);",
+									"    pm.expect(review.vote).to.equals(0);",
+									"    pm.expect(review.approvalStatus).to.equals(\"pending\");",
+									"",
+									"    var publishingDate = new Date( review.publishingDate );",
+									"    var currentDate = new Date();",
+									"    pm.expect( publishingDate.toLocaleDateString() ).to.equals(currentDate.toLocaleDateString());",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": \"{{random2_userId}}\",\n    \"reviewText\": \"{{reviewText}}\",\n    \"rating\": 5.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/products/{{sku}}/reviews",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku}}",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Review2.2",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"var reviewText = pm.variables.replaceIn('{{$randomLoremSentence}}')",
+									"",
+									"pm.environment.set(\"reviewText\", reviewText);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const review = pm.response.json();",
+									"pm.environment.set(\"idReview2.2\", review.idReview);",
+									"",
+									"pm.test(\"A new review was returned\", function () {",
+									"",
+									"    const reviewText = pm.environment.get(\"reviewText\");",
+									"",
+									"    pm.expect(review.reviewText).to.equals(reviewText);",
+									"    pm.expect(review.rating).to.equals(5.0);",
+									"    pm.expect(review.vote).to.equals(0);",
+									"    pm.expect(review.approvalStatus).to.equals(\"pending\");",
+									"",
+									"    var publishingDate = new Date( review.publishingDate );",
+									"    var currentDate = new Date();",
+									"    pm.expect( publishingDate.toLocaleDateString() ).to.equals(currentDate.toLocaleDateString());",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": \"{{random2_userId}}\",\n    \"reviewText\": \"{{reviewText}}\",\n    \"rating\": 5.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/products/{{sku}}/reviews",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku}}",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve review2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review was approved\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Status of the review is 'approved'\", function () {",
+									"",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.approvalStatus).to.equals(\"approved\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "approved"
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/acceptreject/{{idReview2}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"acceptreject",
+								"{{idReview2}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve review2.2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review was approved\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Status of the review is 'approved'\", function () {",
+									"",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.approvalStatus).to.equals(\"approved\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "approved"
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/acceptreject/{{idReview2.2}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"acceptreject",
+								"{{idReview2.2}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Amigo1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    const token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"token\", token);  \r",
+									"\r",
+									"    const userId = pm.response.json().userId;\r",
+									"    pm.environment.set(\"amigo1_userId\", userId);\r",
+									"\r",
+									"    const username = pm.response.json().username;\r",
+									"    pm.environment.set(\"amigo1_username\", username);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"amigo1_username\", \"admin2@mail.com\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"admin2@mail.com\",\r\n    \"password\":\"AdminPW2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/public/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amigo1 - Create Review3",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"var reviewText = pm.variables.replaceIn('{{$randomLoremSentence}}')",
+									"",
+									"pm.environment.set(\"reviewText\", reviewText);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const review = pm.response.json();",
+									"pm.environment.set(\"idReview3\", review.idReview);",
+									"",
+									"pm.test(\"A new review was returned\", function () {",
+									"",
+									"    const reviewText = pm.environment.get(\"reviewText\");",
+									"",
+									"    pm.expect(review.reviewText).to.equals(reviewText);",
+									"    pm.expect(review.rating).to.equals(5.0);",
+									"    pm.expect(review.vote).to.equals(0);",
+									"    pm.expect(review.approvalStatus).to.equals(\"pending\");",
+									"",
+									"    var publishingDate = new Date( review.publishingDate );",
+									"    var currentDate = new Date();",
+									"    pm.expect( publishingDate.toLocaleDateString() ).to.equals(currentDate.toLocaleDateString());",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": \"{{amigo1_userId}}\",\n    \"reviewText\": \"{{reviewText}}\",\n    \"rating\": 5.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/products/{{sku}}/reviews",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku}}",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amigo1 - Approve review3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review was approved\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Status of the review is 'approved'\", function () {",
+									"",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.approvalStatus).to.equals(\"approved\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "approved"
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/acceptreject/{{idReview3}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"acceptreject",
+								"{{idReview3}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amigo1 - Upvote Review1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote added\", function () {",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Returns true\", function () {",
+									"    pm.response.to.have.body(\"true\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{amigo1_userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview1}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview1}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amigo1 - Upvote Review1.2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote added\", function () {",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Returns true\", function () {",
+									"    pm.response.to.have.body(\"true\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{amigo1_userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview1.2}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview1.2}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Amigo2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    const token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"token\", token);  \r",
+									"\r",
+									"    const userId = pm.response.json().userId;\r",
+									"    pm.environment.set(\"amigo2_userId\", userId);\r",
+									"\r",
+									"    const username = pm.response.json().username;\r",
+									"    pm.environment.set(\"amigo2_username\", username);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"amigo2_username\", \"user3@mail.com\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"user3@mail.com\",\r\n    \"password\":\"userPW3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/public/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amigo2 - Create Review4",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"var reviewText = pm.variables.replaceIn('{{$randomLoremSentence}}')",
+									"",
+									"pm.environment.set(\"reviewText\", reviewText);",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const review = pm.response.json();",
+									"pm.environment.set(\"idReview4\", review.idReview);",
+									"",
+									"pm.test(\"A new review was returned\", function () {",
+									"",
+									"    const reviewText = pm.environment.get(\"reviewText\");",
+									"",
+									"    pm.expect(review.reviewText).to.equals(reviewText);",
+									"    pm.expect(review.rating).to.equals(5.0);",
+									"    pm.expect(review.vote).to.equals(0);",
+									"    pm.expect(review.approvalStatus).to.equals(\"pending\");",
+									"",
+									"    var publishingDate = new Date( review.publishingDate );",
+									"    var currentDate = new Date();",
+									"    pm.expect( publishingDate.toLocaleDateString() ).to.equals(currentDate.toLocaleDateString());",
+									"});",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": \"{{amigo2_userId}}\",\n    \"reviewText\": \"{{reviewText}}\",\n    \"rating\": 5.0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/products/{{sku}}/reviews",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"products",
+								"{{sku}}",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amigo2 - Approve review3 Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Review was approved\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Status of the review is 'approved'\", function () {",
+									"",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.approvalStatus).to.equals(\"approved\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "approved"
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/acceptreject/{{idReview4}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"acceptreject",
+								"{{idReview4}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amigo2 - Upvote Review1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote added\", function () {",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Returns true\", function () {",
+									"    pm.response.to.have.body(\"true\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{amigo2_userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview1}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview1}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amigo2 - Upvote Review2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote added\", function () {",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Returns true\", function () {",
+									"    pm.response.to.have.body(\"true\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{amigo2_userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview2}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview2}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Random3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    const token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"token\", token);  \r",
+									"\r",
+									"    const userId = pm.response.json().userId;\r",
+									"    pm.environment.set(\"random3_userId\", userId);\r",
+									"\r",
+									"    const username = pm.response.json().username;\r",
+									"    pm.environment.set(\"random3_username\", username);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"random3_username\", \"user7@mail.com\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"user7@mail.com\",\r\n    \"password\":\"userPW7\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/public/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Random3 - Upvote Review2.2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote added\", function () {",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Returns true\", function () {",
+									"    pm.response.to.have.body(\"true\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{random3_userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview2.2}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview2.2}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Random4",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    const token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"token\", token);  \r",
+									"\r",
+									"    const userId = pm.response.json().userId;\r",
+									"    pm.environment.set(\"random4_userId\", userId);\r",
+									"\r",
+									"    const username = pm.response.json().username;\r",
+									"    pm.environment.set(\"random4_username\", username);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"random4_username\", \"user6@mail.com\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"user6@mail.com\",\r\n    \"password\":\"userPW6\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/public/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Random4 - Upvote Review2.2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote added\", function () {",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Returns true\", function () {",
+									"    pm.response.to.have.body(\"true\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{random4_userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview2.2}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview2.2}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Random5",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    const token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"token\", token);  \r",
+									"\r",
+									"    const userId = pm.response.json().userId;\r",
+									"    pm.environment.set(\"random5_userId\", userId);\r",
+									"\r",
+									"    const username = pm.response.json().username;\r",
+									"    pm.environment.set(\"random5_username\", username);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"random5_username\", \"user12@mail.com\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"user12@mail.com\",\r\n    \"password\":\"userPW12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/public/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Random3 - Upvote Review2.2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote added\", function () {",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Returns true\", function () {",
+									"    pm.response.to.have.body(\"true\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{random5_userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview2.2}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview2.2}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Random6",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    const token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"token\", token);  \r",
+									"\r",
+									"    const userId = pm.response.json().userId;\r",
+									"    pm.environment.set(\"random6_userId\", userId);\r",
+									"\r",
+									"    const username = pm.response.json().username;\r",
+									"    pm.environment.set(\"random6_username\", username);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"random6_username\", \"user9@mail.com\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"user9@mail.com\",\r\n    \"password\":\"userPW9\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/public/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Random3 - Upvote Review2.2 Copy 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote added\", function () {",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Returns true\", function () {",
+									"    pm.response.to.have.body(\"true\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{random6_userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview2.2}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview2.2}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login final",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Authtenticates\", function(){\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"\r",
+									"    const token = postman.getResponseHeader(\"Authorization\");\r",
+									"    pm.environment.set(\"token\", token);  \r",
+									"\r",
+									"    const userId = pm.response.json().userId;\r",
+									"    pm.environment.set(\"userId\", userId);\r",
+									"\r",
+									"    const username = pm.response.json().username;\r",
+									"    pm.environment.set(\"username\", username);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"username\", \"admin1@mail.com\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"admin1@mail.com\",\r\n    \"password\":\"AdminPW1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/public/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"public",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EU - Upvote Review1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Upvote added\", function () {",
+									"    pm.response.to.have.status(\"Created\");",
+									"});",
+									"",
+									"pm.test(\"Returns true\", function () {",
+									"    pm.response.to.have.body(\"true\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userID\": {{userId}},\n    \"vote\": \"upVote\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/reviews/{{idReview1}}/vote",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"{{idReview1}}",
+								"vote"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Run Recommendations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Suggested reviews endpoint return data : HTTP 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Contains expected reviews recommendedAlgorithm:\"+pm.environment.get(\"recommendedAlgorithm\"), function () {",
+									"    response = pm.response.json();",
+									"",
+									"    if(pm.environment.get(\"recommendedAlgorithm\")==1){",
+									"            containsReview22 = false;",
+									"            ",
+									"            idReview22 = pm.environment.get(\"idReview2.2\");",
+									"            response.forEach(review => {",
+									"                if(review.idReview==idReview22)containsReview22=true;",
+									"            })",
+									"            pm.expect(containsReview22,\"Review 2 not present\").to.true",
+									"",
+									"    }else{",
+									"        if(pm.environment.get(\"recommendedAlgorithm\")==2){",
+									"            containsReview3 = false;",
+									"            containsReview4 = false;",
+									"            idReview3 = pm.environment.get(\"idReview3\");",
+									"            idReview4 = pm.environment.get(\"idReview4\");",
+									"            response.forEach(review => {",
+									"                if(review.idReview==idReview3)containsReview3=true;",
+									"                if(review.idReview==idReview4)containsReview4=true;",
+									"            })",
+									"            pm.expect(containsReview3,\"Review 3 not present\").to.true",
+									"            pm.expect(containsReview4,\"Review 4 not present\").to.true",
+									"        }else{",
+									"            ",
+									"            containsReview3 = false;",
+									"            containsReview4 = false;",
+									"            idReview3 = pm.environment.get(\"idReview3\");",
+									"            idReview4 = pm.environment.get(\"idReview4\");",
+									"            response.forEach(review => {",
+									"                if(review.idReview==idReview3)containsReview3=true;",
+									"                if(review.idReview==idReview4)containsReview4=true;",
+									"                if(containsReview4 && review.idReview==idReview3)containsReview3=true;",
+									"            })",
+									"            pm.expect(containsReview4,\"Review 4 not present\").to.true",
+									"            pm.expect(containsReview3,\"Review 3 not present\").to.true",
+									"        }",
+									"    }",
+									"    ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/reviews/algorithm/{{userId}}",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"reviews",
+								"algorithm",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "HOST",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

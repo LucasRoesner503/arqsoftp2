@@ -1,0 +1,96 @@
+TP 4/10/2023
+
+Algorithms of recommendation.
+
+1º algorithm ———
+List all reviews sorted by quantity of upvotes such that minimum upvotes should be 4 and 65% should be upvotes
+
+
+2º algorithm) ——
+
+Parameters for users to be like me in terms of how they vote (50% of the votes should be like mine)
+All reviews authored by other users that vote at least 50% of the times like the requesting user. All the reviews authored by a user that votes like me at least 50% of times. The algorithm will recommend the reviews authored by a user who (the user) votes at least 50% like (me). Users vote in reviews, I upvote this review, another user upvotes this review.
+If 2 people at least vote equally on a review 50% of the time, then that I will be recommended the list of reviews of that user.
+
+User A and B are similar to me in terms of vote
+
+A - review 1 , 2 , 3
+B - review 4, 5, 6
+
+All these reviews will be recommended to me (except if I already voted in those reviews) — (doesn’t matter what he does with the reviews).
+
+3º algorithm) —————
+(Only for groups of 3)
+
+Combination (concatenation) of the previous 2 algorithms BUT only reviews that were proposed (written / produced) by the USERs that have reviews similar to me (just like 2º algorithm).
+
+————————————————————————————————
+What type of SKU are important?
+
+There are 3 algorithms to generate SKU
+
+1º Algorithm
+
+An { algarismo, letter, algarismo, letter , algarismo, letter, letter , algarismo, letter, algarismo , special character }
+
+2º Algorithm
+
+{ 10 mid characters of the hexadecimal representation of the hashcode of the designation of Product}
+{generate hashcode of the designation of the product} —> returns a number (decimal) —> convert to hexadecimal —> then pick the 10 mid character of that
+
+3º Algorithm
+
+{Composition of the previous 2 algorithms, first 6 characters from the 1st and first 5 characters from the 2nd} 6 + 5
+
+—————————————————————————————————
+Persistence Process (Data Model decide o tipo de persistencia a ser usado)
+
+There is no relational database
+The relational model is already in the project
+We will need to change it a lot!
+We need to provide the capability of persisting the data in mongoDb.
+
+MongoDB Document Model
+SQL - Relational Model <--
+Neo4J - Tree Model
+Redis - messages (for groups of 3)
+
+Need to provide capability to persist in relational (already exists), in document , in tree and in messages like (redis)
+
+——————————————
+Are all rest endpoints already done?
+
+Recommendation of reviews is not present. Need a new endpoint for that. For requesting the algorithm of recommendation. Only 1 algorithm configured in any moment during run-time. It’s ONLY the config file that defines which algorithm is used. We only need 1 endpoint for all 3.
+
+
+The config file defines the persistence process and generation of SKU aswell.
+
+——————————————-
+Every decision needs to be documented and justified. Alternatives aswell. Very important.
+
+———————————————
+LEVELS OF ARCHITECTURE MANDATORY
+
+We should decide which. Any change to the system will be represented in level 2 and up. Level 1 is basically useless.
+There is no need to represent every design or implementation. Only architecturaly significant scenarios. The Most important scenarios.
+For example:
+
+How the system will generate SKU
+How it will recommend reviews
+How the persistence process works
+
+Both in logical view and process view.
+
+ASR = Architectural Significant Scenarios
+
+————————————————
+The final solution should have open-closed principle?
+
+Without open-closed principle we cannot change from 1 algorithm to another without recoding.
+Its necessary! For all the 3 main scenarios above.
+
+————————————————
+
+Identify the flaws of the project, correct them.
+
+————————————————
