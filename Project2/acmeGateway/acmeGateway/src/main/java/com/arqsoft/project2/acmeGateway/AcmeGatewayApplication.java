@@ -14,6 +14,12 @@ import java.util.Map;
 @SpringBootApplication
 public class AcmeGatewayApplication {
 
+	@Value("${monolithic.url}")
+	private String monolithicUrl;
+
+	@Value("${acme.user}")
+	private String acmeUser;
+
 	public static void main(String[] args) {
 		SpringApplication.run(AcmeGatewayApplication.class, args);
 	}
@@ -33,7 +39,7 @@ public class AcmeGatewayApplication {
 									return Mono.just(s);
 								})
 						)
-						.uri("http://localhost:8080")
+						.uri(monolithicUrl)
 				)
 				.route(r -> r.path("/products/**")
 						.filters(f -> f.addRequestHeader("authToken", String.valueOf(new StringBuilder("Bearer ").append(headers.get("authToken"))))
@@ -45,7 +51,7 @@ public class AcmeGatewayApplication {
 						.filters(f -> f.addRequestHeader("authToken", String.valueOf(new StringBuilder("Bearer ").append(headers.get("authToken"))))
 								.addResponseHeader("X-Powered-By", "Response")
 						)
-						.uri("http://localhost:8080")
+						.uri(acmeUser)
 				)
 				.route(r -> r.path("/reviews/**")
 						.filters(f -> f.addRequestHeader("authToken", String.valueOf(new StringBuilder("Bearer ").append(headers.get("authToken"))))
