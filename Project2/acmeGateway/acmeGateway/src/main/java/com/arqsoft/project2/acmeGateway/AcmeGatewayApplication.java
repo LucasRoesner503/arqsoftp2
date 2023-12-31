@@ -20,6 +20,9 @@ public class AcmeGatewayApplication {
 	@Value("${acme.user}")
 	private String acmeUser;
 
+	@Value("${acme.authentication}")
+	private String acmeAuthentication;
+
 	public static void main(String[] args) {
 		SpringApplication.run(AcmeGatewayApplication.class, args);
 	}
@@ -39,7 +42,7 @@ public class AcmeGatewayApplication {
 									return Mono.just(s);
 								})
 						)
-						.uri(monolithicUrl)
+						.uri(acmeAuthentication)
 				)
 				.route(r -> r.path("/products/**")
 						.filters(f -> f.addRequestHeader("authToken", String.valueOf(new StringBuilder("Bearer ").append(headers.get("authToken"))))

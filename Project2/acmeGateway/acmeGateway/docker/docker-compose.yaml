@@ -63,3 +63,19 @@ services:
     depends_on:
       - mongodb
     restart: unless-stopped
+
+  acmeauthentication:
+    image: acme-authentication:latest
+    container_name: acme-authentication-container
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATA_MONGODB_HOST=mongodb
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_DATABASE=admin
+      - SPRING_DATA_MONGODB_USERNAME=user
+      - SPRING_DATA_MONGODB_PASSWORD=pass
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+

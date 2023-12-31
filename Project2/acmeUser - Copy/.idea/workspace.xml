@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0aeda301-8d48-4782-869c-c2ad9b41208e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/.mvn/wrapper/maven-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/data/acme.h2.db" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/mvnw" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/mvnw.cmd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/AcmeAuthenticationApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/AcmeConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/Authentication/AuthenticationApi.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/Authentication/AuthenticationRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/SecurityConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/model/Role.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/model/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/model/UserView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/model/UserViewMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/property/EntityNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/property/FileStorageException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/property/FileStorageProperties.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/property/MyFileNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/java/com/arqsoft/project2/acmeAuthentication/property/UploadFileResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/resources/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/resources/data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/resources/rsa.private.key" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/main/resources/rsa.public.key" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../acmeAuthentication/src/test/java/com/arqsoft/project2/acmeAuthentication/AcmeAuthenticationApplicationTests.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="Use Maven wrapper" />
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="workspaceImportEnabled" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="MavenRunner">
+    <option name="skipTests" value="true" />
+  </component>
+  <component name="ProjectId" id="2aHLYjU4RsxIbyg7p1vG0RX4PPZ" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "C:/ISEP/ARQSOFT/gitHubRepos/arqsoftp2/Project2/acmeAuthentication",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.17",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\ISEP\ARQSOFT\gitHubRepos\arqsoftp2\Project2\acmeUser" />
+      <recent name="C:\ISEP\ARQSOFT\gitHubRepos\arqsoftp2\Project2\acmeUser\src\main\resources" />
+      <recent name="C:\ISEP\ARQSOFT\gitHubRepos\arqsoftp2\Project2\acmeUser\src\main\java\com\arqsoft\project2\acmeUser" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\ISEP\ARQSOFT\gitHubRepos\arqsoftp2\Project2\acmeUser" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.arqsoft.project2.acmeUser.controllers" />
+      <recent name="com.arqsoft.project2.acmeUser" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="acmeUser - Copy" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="acmeUser - Copy" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0aeda301-8d48-4782-869c-c2ad9b41208e" name="Changes" comment="" />
+      <created>1703970609852</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1703970609852</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+</project>
