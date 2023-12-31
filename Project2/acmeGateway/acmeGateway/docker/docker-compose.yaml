@@ -79,3 +79,17 @@ services:
       - mongodb
     restart: unless-stopped
 
+  acmeproducts:
+    image: acme-products:latest
+    container_name: acme-products-container
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATA_MONGODB_HOST=mongodb
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_DATABASE=admin
+      - SPRING_DATA_MONGODB_USERNAME=user
+      - SPRING_DATA_MONGODB_PASSWORD=pass
+    depends_on:
+      - mongodb
+    restart: unless-stopped
