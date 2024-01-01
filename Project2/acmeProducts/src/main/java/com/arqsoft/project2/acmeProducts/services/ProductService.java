@@ -18,11 +18,15 @@ public interface ProductService {
 
     Iterable<ProductDTO> getCatalog();
 
+    Iterable<ProductDTO> findByApproved();
+
     ProductDetailDTO getDetails(final String sku);
 
     ProductDTO create(final Product manager);
 
     ProductDTO updateBySku(final String sku, final Product product);
+
+    ProductDTO approveProduct(final String sku);
 
     void deleteBySku(final String sku);
 }

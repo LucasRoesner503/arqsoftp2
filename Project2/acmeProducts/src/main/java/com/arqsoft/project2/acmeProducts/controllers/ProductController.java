@@ -56,6 +56,15 @@ public class ProductController {
         return ResponseEntity.ok().body( products );
     }
 
+    @Operation(summary = "gets approved products")
+    @GetMapping(value = "/approve")
+    public ResponseEntity<Iterable<ProductDTO>> findAllByApproved(){
+
+        final Iterable<ProductDTO> products = service.findByApproved();
+
+        return ResponseEntity.ok().body( products );
+    }
+
     @Operation(summary = "creates a product")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -74,6 +83,21 @@ public class ProductController {
     public ResponseEntity<ProductDTO> Update(@PathVariable("sku") final String sku, @RequestBody final Product product) {
 
         final ProductDTO productDTO = service.updateBySku(sku, product);
+
+        if( productDTO == null )
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Product not found.");
+        else
+            return ResponseEntity.ok().body(productDTO);
+    }
+
+    @Operation(summary = "updates a product")
+    @PatchMapping(value = "/approve/{sku}/role/{role}")
+    public ResponseEntity<ProductDTO> approveProduct(@PathVariable("sku") final String sku, @PathVariable("role") final String role) {
+
+        if(!role.equals("Admin"))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"You are not authorized to approve products.");
+
+        final ProductDTO productDTO = service.approveProduct(sku);
 
         if( productDTO == null )
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Product not found.");

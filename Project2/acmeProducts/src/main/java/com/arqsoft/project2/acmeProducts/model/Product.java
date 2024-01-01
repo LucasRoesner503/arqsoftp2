@@ -23,6 +23,9 @@ public class Product implements Idget<Long> {
 
     @Column(nullable = false)
     private String description;
+
+    @Column(nullable = false)
+    private int approved;
     /*
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Review> review = new ArrayList<Review>(); */
@@ -32,16 +35,18 @@ public class Product implements Idget<Long> {
     public Product(final Long productID, final String sku) {
         this.productID = Objects.requireNonNull(productID);
         setSku(sku);
+        this.approved = 0;
     }
 
     public Product(final Long productID, final String sku, final String designation, final String description) {
         this(productID, sku);
         setDescription(description);
         setDesignation(designation);
+        this.approved = 0;
     }
 
     public Product(final String sku) {
-        setSku(sku);
+        setSku(sku); this.approved = 0;
     }
 
     public Product(final String sku, final String designation, final String description) {
@@ -49,6 +54,7 @@ public class Product implements Idget<Long> {
         generateProductID();
         setDescription(description);
         setDesignation(designation);
+        this.approved = 0;
     }
 
     public void setSku(String sku) {
@@ -126,6 +132,14 @@ public class Product implements Idget<Long> {
     @Override
     public Long getId() {
         return this.productID;
+    }
+
+    public int getApproved() {
+        return approved;
+    }
+
+    public void setApproved(int approved) {
+        this.approved = approved;
     }
 /*
     public List<Review> getReview() {

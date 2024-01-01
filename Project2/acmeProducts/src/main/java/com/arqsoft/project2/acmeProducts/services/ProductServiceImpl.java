@@ -64,6 +64,20 @@ public class ProductServiceImpl implements ProductService {
         return pDto;
     }
 
+    @Override
+    public Iterable<ProductDTO> findByApproved() {
+        Iterable<Product> p = repository.findAll();
+        List<ProductDTO> pDto = new ArrayList();
+        for (Product pd:p) {
+            if(pd.getApproved() >= 2){
+                pDto.add(pd.toDto());
+            }
+
+        }
+
+        return pDto;
+    }
+
     public ProductDetailDTO getDetails(String sku) {
 
         Optional<Product> p = repository.findBySku(sku);
@@ -94,6 +108,19 @@ public class ProductServiceImpl implements ProductService {
 
         Product productUpdated = repository.save(productToUpdate.get());
         
+        return productUpdated.toDto();
+    }
+
+    @Override
+    public ProductDTO approveProduct(String sku) {
+        final Optional<Product> productToUpdate = repository.findBySku(sku);
+
+        if( productToUpdate.isEmpty() ) return null;
+
+        productToUpdate.get().setApproved(productToUpdate.get().getApproved()+1);
+
+        Product productUpdated = repository.save(productToUpdate.get());
+
         return productUpdated.toDto();
     }
 
