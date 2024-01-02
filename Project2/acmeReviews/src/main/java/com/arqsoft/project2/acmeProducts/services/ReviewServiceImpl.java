@@ -17,6 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -180,9 +181,9 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Double getWeightedAverage(Product product){
+    public Double getWeightedAverage(Long productId){
 
-        Optional<List<Review>> r = repository.findByProductId(product);
+        Optional<List<Review>> r = repository.findByProductId(productId);
 
         if(r.isEmpty() || r.get().isEmpty()){
             return 0.0;
@@ -229,6 +230,34 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         return ReviewMapper.toDtoList(r.get());
+    }
+
+    @Override
+    public ReviewDTO recommendReview(Long reviewID, Long userID) {
+
+        Optional<Review> rev = repository.findById(reviewID);
+        if (rev.isEmpty()){
+            return null;
+        }
+        Review r = rev.get();
+        List<ReviewDTO> reviews = getReviewAlgorithm(userID);
+
+        if (reviews == null) return null;
+
+        for (ReviewDTO review: reviews) {
+            if (Objects.equals(review.getIdReview(), reviewID)) {
+                int count = r.getApprovedCount() + 1;
+                r.setApprovedCount(count);
+                if(count >=2) {
+                    r.setApprovalStatus("approved");
+                }
+                repository.save(r);
+                return ReviewMapper.toDto(r);
+            }
+        }
+
+    return null;
+
     }
 
     @Override

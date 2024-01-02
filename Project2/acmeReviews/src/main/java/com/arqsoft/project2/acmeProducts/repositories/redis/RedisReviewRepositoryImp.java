@@ -23,12 +23,12 @@ public class RedisReviewRepositoryImp extends RedisBaseRepository<Review,Long> i
     }
 
     @Override
-    public Optional<List<Review>> findByProductId(Product product) {
+    public Optional<List<Review>> findByProductId(Long productId) {
         List<Review> result = new ArrayList<>();
         Iterable<Review> allReviews = findAll();
 
         for (Review review : allReviews) {
-            if (review.getProduct().equals(product)) {
+            if (review.getProduct().getProductID().equals(productId)) {
                 result.add(review);
             }
         }

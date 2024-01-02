@@ -16,11 +16,13 @@ public interface ReviewService {
 
     boolean addVoteToReview(Long reviewID, VoteReviewDTO voteReviewDTO);
 
-    Double getWeightedAverage(Product product);
+    Double getWeightedAverage(Long productId);
 
     Boolean DeleteReview(Long reviewId);
 
     List<ReviewDTO> findPendingReview();
+
+    ReviewDTO recommendReview(Long reviewID, Long userID);
 
     ReviewDTO moderateReview(Long reviewID, String approved);
 

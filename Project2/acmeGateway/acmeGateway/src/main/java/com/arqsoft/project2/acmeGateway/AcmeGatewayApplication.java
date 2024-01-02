@@ -29,6 +29,9 @@ public class AcmeGatewayApplication {
 	@Value("${acme.reviews}")
 	private String acmeReviews;
 
+	@Value("${acme.aggregatedratings}")
+	private String acmeAggregatedRatings;
+
 	public static void main(String[] args) {
 		SpringApplication.run(AcmeGatewayApplication.class, args);
 	}
@@ -72,7 +75,7 @@ public class AcmeGatewayApplication {
 						.filters(f -> f.addRequestHeader("authToken", String.valueOf(new StringBuilder("Bearer ").append(headers.get("authToken"))))
 								.addResponseHeader("X-Powered-By", "Response")
 						)
-						.uri("http://localhost:8080")
+						.uri(acmeAggregatedRatings)
 				)
 				.build();
 

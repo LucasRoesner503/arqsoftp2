@@ -19,9 +19,9 @@ public class Neo4JReviewRepositoryImp extends Neo4JBaseRepository<Review, Long> 
 
 
     @Override
-    public Optional<List<Review>> findByProductId(Product product) {
+    public Optional<List<Review>> findByProductId(Long product) {
         String cypherQuery = "MATCH (r:Review)-[:REVIEWS] -> (p:Product) WHERE p.productId = $productId RETURN r";
-        Map<String, Object> params = Map.of("productId", product.getProductID());
+        Map<String, Object> params = Map.of("productId", product);
         Class<Review> domainClass = Review.class;
         List<Review> reviews = neo4JRepo.findAll(cypherQuery, params, domainClass);
         return Optional.of(reviews);

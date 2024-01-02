@@ -2,6 +2,7 @@ package com.arqsoft.project2.acmeProducts.controllers;
 
 
 import com.arqsoft.project2.acmeProducts.model.CreateReviewDTO;
+import com.arqsoft.project2.acmeProducts.model.Product;
 import com.arqsoft.project2.acmeProducts.model.ReviewDTO;
 import com.arqsoft.project2.acmeProducts.model.VoteReviewDTO;
 import com.arqsoft.project2.acmeProducts.services.ReviewService;
@@ -58,6 +59,19 @@ public class ReviewController {
         return new ResponseEntity<ReviewDTO>(review, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "get weighted average")
+    @GetMapping("/average/{productId}")
+    public ResponseEntity<Double> createReview(@PathVariable(value = "productId") final Long productId) {
+
+        final Double value = rService.getWeightedAverage(productId);
+
+        if(value == null){
+            return ResponseEntity.badRequest().build();
+        }
+
+        return new ResponseEntity<Double>(value, HttpStatus.CREATED);
+    }
+
     @Operation(summary = "add vote")
     @PutMapping("/{reviewID}/vote")
     public ResponseEntity<Boolean> addVote(@PathVariable(value = "reviewID") final Long reviewID, @RequestBody VoteReviewDTO voteReviewDTO){
@@ -99,6 +113,23 @@ public class ReviewController {
 
         try {
             ReviewDTO rev = rService.moderateReview(reviewID, approved);
+
+            return ResponseEntity.ok().body(rev);
+        }
+        catch( IllegalArgumentException e ) {
+            return ResponseEntity.badRequest().build();
+        }
+        catch( ResourceNotFoundException e ) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Operation(summary = "Accept or reject review")
+    @PatchMapping("/recommend/{reviewID}/user/{userID}")
+    public ResponseEntity<ReviewDTO> recommendReview(@PathVariable(value = "reviewID") final Long reviewID, @PathVariable(value = "userID") final Long userID){
+
+        try {
+            ReviewDTO rev = rService.recommendReview(reviewID, userID);
 
             return ResponseEntity.ok().body(rev);
         }

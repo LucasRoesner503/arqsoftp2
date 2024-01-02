@@ -57,8 +57,8 @@ services:
     environment:
       - SPRING_DATA_MONGODB_HOST=mongodb
       - SPRING_DATA_MONGODB_PORT=27017
-      - SPRING_DATA_MONGODB_DATABASE=admin
-      - SPRING_DATA_MONGODB_USERNAME=user
+      - SPRING_DATA_MONGODB_DATABASE=user
+      - SPRING_DATA_MONGODB_USERNAME=userUser
       - SPRING_DATA_MONGODB_PASSWORD=pass
     depends_on:
       - mongodb
@@ -72,8 +72,8 @@ services:
     environment:
       - SPRING_DATA_MONGODB_HOST=mongodb
       - SPRING_DATA_MONGODB_PORT=27017
-      - SPRING_DATA_MONGODB_DATABASE=admin
-      - SPRING_DATA_MONGODB_USERNAME=user
+      - SPRING_DATA_MONGODB_DATABASE=user
+      - SPRING_DATA_MONGODB_USERNAME=userUser
       - SPRING_DATA_MONGODB_PASSWORD=pass
     depends_on:
       - mongodb
@@ -87,8 +87,8 @@ services:
     environment:
       - SPRING_DATA_MONGODB_HOST=mongodb
       - SPRING_DATA_MONGODB_PORT=27017
-      - SPRING_DATA_MONGODB_DATABASE=admin
-      - SPRING_DATA_MONGODB_USERNAME=user
+      - SPRING_DATA_MONGODB_DATABASE=product
+      - SPRING_DATA_MONGODB_USERNAME=userProduct
       - SPRING_DATA_MONGODB_PASSWORD=pass
     depends_on:
       - mongodb
@@ -102,9 +102,37 @@ services:
     environment:
       - SPRING_DATA_MONGODB_HOST=mongodb
       - SPRING_DATA_MONGODB_PORT=27017
-      - SPRING_DATA_MONGODB_DATABASE=admin
-      - SPRING_DATA_MONGODB_USERNAME=user
+      - SPRING_DATA_MONGODB_DATABASE=review
+      - SPRING_DATA_MONGODB_USERNAME=userReview
       - SPRING_DATA_MONGODB_PASSWORD=pass
     depends_on:
       - mongodb
+    restart: unless-stopped
+
+  acmeaggregatedratings:
+    image: acme-aggregated-ratings:latest
+    container_name: acme-aggregated-ratings-container
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_DATA_MONGODB_HOST=mongodb
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_DATABASE=aggregatedRating
+      - SPRING_DATA_MONGODB_USERNAME=userAggregatedRating
+      - SPRING_DATA_MONGODB_PASSWORD=pass
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  acmegateway:
+    image: acme-gateway:latest
+    container_name: acme-gateway-container
+    ports:
+      - "5000:5000"
+    depends_on:
+      - acmeuser
+      - acmeauthentication
+      - acmeproducts
+      - acmereviews
+      - acmeaggregatedratings
     restart: unless-stopped

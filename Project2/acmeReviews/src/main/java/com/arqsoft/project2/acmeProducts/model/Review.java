@@ -46,6 +46,9 @@ public class Review implements Idget<Long> {
     @Column(nullable = false)
     private String funFact;
 
+    @Column(nullable = false)
+    private int approvedCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
@@ -57,6 +60,8 @@ public class Review implements Idget<Long> {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private Rating rating;
 
+
+
     public Review(){}
 
     public Review(final Long idReview, final long version, final String approvalStatus, final String reviewText, final LocalDate publishingDate, final String funFact) {
@@ -66,6 +71,7 @@ public class Review implements Idget<Long> {
         setReviewText(reviewText);
         setPublishingDate(publishingDate);
         setFunFact(funFact);
+        this.approvedCount = 0;
     }
 
     public Review(final Long idReview, final long version, final String approvalStatus, final  String reviewText, final List<Vote> upVote, final List<Vote> downVote, final String report, final LocalDate publishingDate, final String funFact, Product product, Rating rating, User user) {
@@ -77,7 +83,7 @@ public class Review implements Idget<Long> {
         setProduct(product);
         setRating(rating);
         setUser(user);
-
+        this.approvedCount = 0;
     }
 
     public Review(final String reviewText, LocalDate publishingDate, Product product, String funFact, Rating rating, User user) {
@@ -91,6 +97,7 @@ public class Review implements Idget<Long> {
         this.upVote = new ArrayList<>();
         this.downVote = new ArrayList<>();
         generateReviewID();
+        this.approvedCount = 0;
     }
 
     public void generateReviewID(){
@@ -126,6 +133,14 @@ public class Review implements Idget<Long> {
             return true;
         }
         return false;
+    }
+
+    public void setApprovedCount(int approvedCount) {
+        this.approvedCount = approvedCount;
+    }
+
+    public int getApprovedCount() {
+        return approvedCount;
     }
 
     public String getReviewText() {

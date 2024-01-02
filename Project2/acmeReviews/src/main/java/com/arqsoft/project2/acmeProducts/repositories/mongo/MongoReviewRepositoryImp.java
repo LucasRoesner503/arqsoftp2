@@ -26,10 +26,10 @@ public class MongoReviewRepositoryImp extends MongoBaseRepository<Review,Long> i
     }
 
     @Override
-    public Optional<List<Review>> findByProductId(Product productId) {
+    public Optional<List<Review>> findByProductId(Long productId) {
         List<Review> all = new ArrayList<>();
         this.findAll().forEach(all::add);
-        return Optional.of(all.stream().filter(r -> r.getProduct().equals(productId)).collect(Collectors.toList()));
+        return Optional.of(all.stream().filter(r -> r.getProduct().getProductID() == productId).collect(Collectors.toList()));
     }
 
     @Override
